@@ -7,34 +7,34 @@ import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ProductService {
-  constructor(
-    @InjectRepository(Product)
-    private productRepo: Repository<Product>,
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
-  ) {}
+    constructor(
+        @InjectRepository(Product)
+        private productRepo: Repository<Product>,
+        @Inject(CACHE_MANAGER)
+        private cacheManager: Cache,
+    ) { }
 
-  async findAll() {
-    const cacheKey = 'products_all';
-    const cached = await this.cacheManager.get(cacheKey);
-    console.log('Cache:', cached);
-    if (cached) {
-      console.log('Desde cache');
-      return cached;
+    async findAll() {
+        const cacheKey = 'products_all';
+        const cached = await this.cacheManager.get(cacheKey);
+        console.log('Cache:', cached);
+        if (cached) {
+            console.log('Desde cache');
+            return cached;
+        }
+        console.log('Desde DB');
+        const data = await this.productRepo.find();
+        await this.cacheManager.set(cacheKey, data, 30);
+        return data;
     }
-    console.log('Desde DB');
-    const data = await this.productRepo.find();
-    await this.cacheManager.set(cacheKey, data, 30);
-    return data;
-  }
 
-  async create(data: { name: string }) {
-  const product = this.productRepo.create(data);
-  const savedProduct = await this.productRepo.save(product);
+    async create(data: { name: string }) {
+        const product = this.productRepo.create(data);
+        const savedProduct = await this.productRepo.save(product);
 
-  // Opcional: invalidar el caché después de crear un producto
-  await this.cacheManager.del('products_all');
+        // Opcional: invalidar el caché después de crear un producto
+        await this.cacheManager.del('products_all');
 
-  return savedProduct;
-}
+        return savedProduct;
+    }
 }
