@@ -27,4 +27,14 @@ export class ProductService {
     await this.cacheManager.set(cacheKey, data, 30);
     return data;
   }
+
+  async create(data: { name: string }) {
+  const product = this.productRepo.create(data);
+  const savedProduct = await this.productRepo.save(product);
+
+  // Opcional: invalidar el caché después de crear un producto
+  await this.cacheManager.del('products_all');
+
+  return savedProduct;
+}
 }

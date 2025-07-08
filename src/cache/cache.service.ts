@@ -1,16 +1,15 @@
 import { CacheModuleOptions, CacheOptionsFactory } from '@nestjs/cache-manager';
 import { Injectable } from '@nestjs/common';
-import { createClient } from 'redis';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Injectable()
 export class CacheConfigService implements CacheOptionsFactory {
   createCacheOptions(): CacheModuleOptions {
-    const client = createClient({ socket: { host: 'localhost', port: 6379 } });
-    client.connect();
-
     return {
-      store: client as any,
-      ttl: 10,
+      store: redisStore,
+      ttl: 30,
+      host: 'localhost',
+      port: 6379,
     };
   }
 }
