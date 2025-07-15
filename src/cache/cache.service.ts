@@ -6,10 +6,12 @@ import * as redisStore from 'cache-manager-ioredis';
 export class CacheConfigService implements CacheOptionsFactory {
   createCacheOptions(): CacheModuleOptions {
     return {
-      store: redisStore,
+      store: redisStore as any, 
       ttl: 30,
-      host: 'localhost',
-      port: 6379,
+      socket: {
+        host: 'localhost',
+        port: 6379,
+      },
     };
   }
 }

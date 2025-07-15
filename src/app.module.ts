@@ -5,7 +5,6 @@ import { ProductModule } from './product/product.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CacheConfigService } from './cache/cache.service';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -13,16 +12,16 @@ import { CacheConfigService } from './cache/cache.service';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'postgres',
-      database: 'cache_error1',
+      password: 'suser',
+      database: 'cache_errors',
       entities: [Product],
       synchronize: true,
     }),
     CacheModule.registerAsync({
       useClass: CacheConfigService,
+      isGlobal: true, 
     }),
     ProductModule,
   ],
-  providers: [CacheConfigService],
 })
 export class AppModule {}
